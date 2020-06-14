@@ -1,3 +1,8 @@
+#include "types.h"
+#include "defs.h"
+#include "param.h"
+#include "mmu.h"
+#include "proc.h"
 #include "queue.h"
 
 
@@ -28,11 +33,20 @@ struct proc *removeQueue(queuePtr q) {
     return process;
 }
 
-struct proc *getFirstRunnableProcess(queuePtr q){
-//    int tempSize;
-//    struct proc *p;
-//    for (tempSize = q->size; tempSize > 0; tempSize--){
-//        p =
-//    }
-    return NULL;
+struct proc *getFirstRunnableProcess(queuePtr q) {
+    int tempSize;
+    struct proc *p = NULL;
+    //struct proc *pReturn = NULL;
+    for (tempSize = q->size; tempSize > 0; tempSize--) {
+        p = removeQueue(q);
+        if (p->state == RUNNABLE) {
+            tempSize--;
+            break;
+        }
+        insertQueueTail(q, p);
+    }
+    for (; tempSize > 0; tempSize--)
+        insertQueueTail(q, removeQueue(q));
+
+    return p;
 }
