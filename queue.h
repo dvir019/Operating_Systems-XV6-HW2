@@ -8,6 +8,10 @@
 #define NPROC 64
 #endif // NPROC
 
+#ifndef NULL
+#define NULL ((void *)0)
+#endif //NULL
+
 #ifndef BOOLEAN
 typedef enum {
     FALSE, TRUE
@@ -28,7 +32,7 @@ void initQueue(queuePtr q);
 
 BOOLEAN isEmptyQueue(queuePtr q);
 
-void insertQueue(queuePtr q, struct proc *precess);
+void insertQueueHead(queuePtr q, struct proc *precess);
 
 struct proc *removeQueue(queuePtr q);
 

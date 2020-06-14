@@ -5,10 +5,6 @@
 #define NPRIORITIES 4
 #endif //NPRIORITIES
 
-#ifndef NULL
-#define NULL ((void *)0)
-#endif //NULL
-
 #include "queue.h"
 
 typedef struct {

@@ -21,3 +21,12 @@ struct proc *removeQueue(queuePtr q) {
     q->size--;
     return process;
 }
+
+struct proc *getFirstRunnableProcess(queuePtr q){
+//    int tempSize;
+//    struct proc *p;
+//    for (tempSize = q->size; tempSize > 0; tempSize--){
+//        p =
+//    }
+    return NULL;
+}
