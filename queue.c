@@ -9,7 +9,7 @@ BOOLEAN isEmptyQueue(queuePtr q) {
     return (BOOLEAN) (!(q->size));
 }
 
-void insertQueue(queuePtr q, struct proc *process) {
+void insertQueueHead(queuePtr q, struct proc *process) {
     q->processes[q->rear] = process;
     q->rear = INCREASE_MODULO(q->rear);
     q->size++;
