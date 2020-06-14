@@ -32,6 +32,8 @@ void initQueue(queuePtr q);
 
 BOOLEAN isEmptyQueue(queuePtr q);
 
+void insertQueueTail(queuePtr q, struct proc *precess);
+
 void insertQueueHead(queuePtr q, struct proc *precess);
 
 struct proc *removeQueue(queuePtr q);

@@ -12,7 +12,7 @@ void initMlq(mlqPtr m) {
 
 void addToPriority(mlqPtr m, int priority, struct proc *p) {
     if (LEGAL_PRIORITY(priority))
-        insertQueueHead((&((m->queues)[priority])), p);
+        insertQueueTail((&((m->queues)[priority])), p);
 }
 
 struct proc *removeFromPriority(mlqPtr m, int priority) {
