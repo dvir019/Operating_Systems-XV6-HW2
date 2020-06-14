@@ -9,9 +9,15 @@ BOOLEAN isEmptyQueue(queuePtr q) {
     return (BOOLEAN) (!(q->size));
 }
 
-void insertQueueHead(queuePtr q, struct proc *process) {
+void insertQueueTail(queuePtr q, struct proc *process) {
     q->processes[q->rear] = process;
     q->rear = INCREASE_MODULO(q->rear);
+    q->size++;
+}
+
+void insertQueueHead(queuePtr q, struct proc *process) {
+    q->front = q->front == 0 ? NPROC - 1 : DECREASE_MODULO(q->front);
+    q->processes[q->front] = process;
     q->size++;
 }
 

@@ -19,6 +19,7 @@ typedef enum {
 #endif // BOOLEAN
 
 #define INCREASE_MODULO(num) (((num) + 1) % NPROC)
+#define DECREASE_MODULO(num) (((num) - 1) % NPROC)
 
 typedef struct {
     struct proc *processes[NPROC];
