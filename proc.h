@@ -62,6 +62,8 @@ struct proc {
     int priority; // the current priority of the process. Used to help with scheduling algorithm
 };
 
+void updateTimes();
+
 // Process memory is laid out contiguously, low addresses first:
 //   text
 //   original data and bss

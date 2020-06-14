@@ -21,4 +21,3 @@ struct proc *removeQueue(queuePtr q) {
     q->size--;
     return process;
 }
-
