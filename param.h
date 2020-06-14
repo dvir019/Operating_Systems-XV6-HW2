@@ -13,3 +13,6 @@
 #define FSSIZE       1000  // size of file system in blocks
 
 #define TIMER_TICK_DURATION (10*1000*1000)
+
+#define NPRIORITIES 4
+#define DEFAULT_PRIORITY 2

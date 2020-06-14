@@ -221,6 +221,17 @@ fork(void)
   acquire(&ptable.lock);
 
   np->state = RUNNABLE;
+  np->priority = DEFAULT_PRIORITY;
+  acquire(&tickslock);
+  np->ctime = ticks;
+  release(&tickslock);
+  np->stime = 0;
+  np->retime = 0;
+  np->rutime = 0;
+  np->timeSlice = timeSlices[DEFAULT_PRIORITY];
+  np->remainingTimeSlice = timeSlices[DEFAULT_PRIORITY];
+  np->priority = DEFAULT_PRIORITY;
+  addToPriority(&prioMlq, DEFAULT_PRIORITY, np);
 
   release(&ptable.lock);
 
@@ -269,6 +280,9 @@ exit(void)
 
   // Jump into the scheduler, never to return.
   curproc->state = ZOMBIE;
+  acquire(&tickslock);
+  curproc->dtime = ticks;
+  release(&tickslock);
   sched();
   panic("zombie exit");
 }

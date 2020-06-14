@@ -52,10 +52,13 @@ struct proc {
 
     // process execution time in TICKs
     // TODO: update these fields in your code
-    int ctime;
-    int stime;
-    int retime;
-    int rutime;
+    int ctime;                 // Creation time
+    int stime;                 // Sleep Time TODO: Check if different from I/O time
+    int retime;                // Waiting time (RUNNABLE but not RUNNING)
+    int rutime;                // Running time
+    int dtime;                 // Death time
+    int timeSlice;
+    int remainingTimeSlice;
     int priority; // the current priority of the process. Used to help with scheduling algorithm
 };
 
