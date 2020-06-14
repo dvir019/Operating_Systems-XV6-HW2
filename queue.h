@@ -32,6 +32,8 @@ void insertQueue(queuePtr q, struct proc *precess);
 
 struct proc *removeQueue(queuePtr q);
 
+struct proc *getFirstRunnableProcess(queuePtr q);
+
 #endif //C_QUEUE_QUEUE_H
 
 
