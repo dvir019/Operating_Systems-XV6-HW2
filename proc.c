@@ -580,8 +580,10 @@ void updateTimes() {
             p->stime++;
         else if (p->state == RUNNABLE)
             p->retime++;
-        else if (p->state == RUNNING)
+        else if (p->state == RUNNING) {
             p->rutime++;
+            p->remainingTimeSlice--;
+        }
         }
     release(&ptable.lock);
 }
