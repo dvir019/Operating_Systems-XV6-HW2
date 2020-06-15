@@ -26,6 +26,8 @@ extern void trapret(void);
 
 static void wakeup1(void *chan);
 
+void initilizeProc(struct proc *p);
+
 void
 pinit(void)
 {
@@ -156,6 +158,7 @@ userinit(void)
   acquire(&ptable.lock);
 
   p->state = RUNNABLE;
+  initilizeProc(p);
 
   release(&ptable.lock);
 }
@@ -222,17 +225,7 @@ fork(void)
   acquire(&ptable.lock);
 
   np->state = RUNNABLE;
-  np->priority = DEFAULT_PRIORITY;
-  acquire(&tickslock);
-  np->ctime = ticks;
-  release(&tickslock);
-  np->stime = 0;
-  np->retime = 0;
-  np->rutime = 0;
-  np->timeSlice = timeSlices[DEFAULT_PRIORITY];
-  np->remainingTimeSlice = timeSlices[DEFAULT_PRIORITY];
-  np->priority = DEFAULT_PRIORITY;
-  addToPriority(&prioMlq, DEFAULT_PRIORITY, np);
+  initilizeProc(np);
 
   release(&ptable.lock);
 
@@ -586,4 +579,19 @@ void updateTimes() {
         }
         }
     release(&ptable.lock);
+}
+/// Initializes the properties of a given process.
+/// Called after allocproc, and acquiring ptable.
+void initilizeProc(struct proc *p) {
+    p->priority = DEFAULT_PRIORITY;
+    acquire(&tickslock);
+    p->ctime = ticks;
+    release(&tickslock);
+    p->stime = 0;
+    p->retime = 0;
+    p->rutime = 0;
+    p->timeSlice = timeSlices[DEFAULT_PRIORITY];
+    p->remainingTimeSlice = timeSlices[DEFAULT_PRIORITY];
+    p->priority = DEFAULT_PRIORITY;
+    addToPriority(&prioMlq, DEFAULT_PRIORITY, p);
 }
