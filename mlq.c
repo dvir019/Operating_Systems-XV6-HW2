@@ -20,5 +20,17 @@ struct proc *removeFromPriority(mlqPtr m, int priority) {
     return NULL;
 }
 
+struct proc *getRunnableProcess(mlqPtr m) {
+    struct proc *p;
+    int prio;
+    for (prio = NPRIORITIES; prio >= 0; prio--) {
+        p = getFirstRunnableProcess(&(m->queues[prio]));
+        if (p != NULL) {
+            return p;
+        }
+    }
+    return NULL;
+}
+
 
 
