@@ -366,10 +366,10 @@ scheduler(void)
 
             c->proc = p;
   //          print_proc_stat(p);
-#ifdef COLLECT_PROC_TIMING
+//#ifdef COLLECT_PROC_TIMING
             // update our stats. This has to be done exactly once every TICK.
-            p->rutime++;
-#endif //COLLECT_PROC_TIMING
+//            p->rutime++;
+//#endif //COLLECT_PROC_TIMING
             switchuvm(p);
             p->state = RUNNING;
 
