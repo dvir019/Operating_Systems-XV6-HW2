@@ -360,11 +360,13 @@ scheduler(void) {
 
         // Loop over process table looking for process to run.
         acquire(&ptable.lock);
+//        for (p = ptable.proc; p < &ptable.proc[NPROC]; p++) {
+//            if (p->state != RUNNABLE)
+//                continue;
         for (index = 0; index < NPROC; index++) {
             p = getRunnableProcess(&prioMlq);
             if (p == NULL)  // No more runnable processes
                 continue;
-
 
             c->proc = p;
             //          print_proc_stat(p);
@@ -378,7 +380,12 @@ scheduler(void) {
             swtch(&(c->scheduler), p->context);
             switchkvm();
 
-
+            if (p->state == RUNNABLE || p->state == SLEEPING) {
+                if (p->remainingTimeSlice == 0)
+                    addToMlqInTail(&prioMlq, p);  // Time slice is over
+                else
+                    addToMlqInHead(&prioMlq, p);
+            }
 
             // Process is done running for now.
             // It should have changed its p->state before coming back.
@@ -579,7 +586,8 @@ void updateTimes() {
             p->retime++;
         else if (p->state == RUNNING) {
             p->rutime++;
-            p->remainingTimeSlice--;
+            if (p->priority > 0)
+                p->remainingTimeSlice--;
         }
     }
     release(&ptable.lock);
