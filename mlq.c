@@ -6,7 +6,6 @@ void initMlq(mlqPtr m) {
     int i;
     for (i = 0; i < NPRIORITIES; ++i) {
         initQueue(&(m->queues[i]));
-        (m->runnableCounter)[i] = 0;
     }
 }
 
@@ -21,13 +20,5 @@ struct proc *removeFromPriority(mlqPtr m, int priority) {
     return NULL;
 }
 
-void increaseRunnableCounter(mlqPtr m, int priority) {
-    if (LEGAL_PRIORITY(priority))
-        (m->runnableCounter[priority])++;
-}
 
-void decreaseRunnableCounter(mlqPtr m, int priority) {
-    if (LEGAL_PRIORITY(priority))
-        (m->runnableCounter[priority])--;
-}
 

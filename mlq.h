@@ -9,7 +9,6 @@
 
 typedef struct {
     queue queues[NPRIORITIES];
-    int runnableCounter[NPRIORITIES];
 } mlq, *mlqPtr;
 
 
@@ -19,8 +18,5 @@ void addToPriority(mlqPtr m, int priority, struct proc *p);
 
 struct proc *removeFromPriority(mlqPtr m, int priority);
 
-void increaseRunnableCounter(mlqPtr m, int priority);
-
-void decreaseRunnableCounter(mlqPtr m, int priority);
 
 #endif //C_QUEUE_MLQ_H
