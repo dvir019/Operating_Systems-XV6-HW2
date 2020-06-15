@@ -370,7 +370,7 @@ scheduler(void)
       if(p->state != RUNNABLE)
         continue;
 
- 
+
             c->proc = p;
   //          print_proc_stat(p);
 #ifdef COLLECT_PROC_TIMING

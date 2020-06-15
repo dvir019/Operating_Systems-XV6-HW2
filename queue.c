@@ -36,10 +36,11 @@ struct proc *removeQueue(queuePtr q) {
 struct proc *getFirstRunnableProcess(queuePtr q) {
     int tempSize;
     struct proc *p = NULL;
-    //struct proc *pReturn = NULL;
+    struct proc *pReturn = NULL;
     for (tempSize = q->size; tempSize > 0; tempSize--) {
         p = removeQueue(q);
         if (p->state == RUNNABLE) {
+            pReturn = p;
             tempSize--;
             break;
         }
@@ -48,5 +49,5 @@ struct proc *getFirstRunnableProcess(queuePtr q) {
     for (; tempSize > 0; tempSize--)
         insertQueueTail(q, removeQueue(q));
 
-    return p;
+    return pReturn;
 }
