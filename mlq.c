@@ -1,3 +1,8 @@
+#include "types.h"
+#include "defs.h"
+#include "param.h"
+#include "mmu.h"
+#include "proc.h"
 #include "mlq.h"
 
 #define LEGAL_PRIORITY(priority) (((priority) >= 0) && ((priority) < NPRIORITIES))
@@ -9,9 +14,12 @@ void initMlq(mlqPtr m) {
     }
 }
 
-void addToPriority(mlqPtr m, int priority, struct proc *p) {
-    if (LEGAL_PRIORITY(priority))
-        insertQueueTail((&((m->queues)[priority])), p);
+void addToMlqInTail(mlqPtr m, struct proc *p) {
+    insertQueueTail((&((m->queues)[p->priority])), p);
+}
+
+void addToMlqInHead(mlqPtr m, struct proc *p) {
+    insertQueueHead((&((m->queues)[p->priority])), p);
 }
 
 struct proc *removeFromPriority(mlqPtr m, int priority) {

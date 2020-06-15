@@ -14,7 +14,9 @@ typedef struct {
 
 void initMlq(mlqPtr m);
 
-void addToPriority(mlqPtr m, int priority, struct proc *p);
+void addToMlqInHead(mlqPtr m, struct proc *p);
+
+void addToMlqInTail(mlqPtr m, struct proc *p);
 
 struct proc *removeFromPriority(mlqPtr m, int priority);
 

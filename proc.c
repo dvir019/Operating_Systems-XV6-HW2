@@ -47,10 +47,10 @@ struct cpu*
 mycpu(void)
 {
   int apicid, i;
-  
+
   if(readeflags()&FL_IF)
     panic("mycpu called with interrupts enabled\n");
-  
+
   apicid = lapicid();
   // APIC IDs are not guaranteed to be contiguous. Maybe we should have
   // a reverse map, or reserve a register to store &cpus[i].
@@ -133,7 +133,7 @@ userinit(void)
   extern char _binary_initcode_start[], _binary_initcode_size[];
 
   p = allocproc();
-  
+
   initproc = p;
   if((p->pgdir = setupkvm()) == 0)
     panic("userinit: out of memory?");
@@ -289,7 +289,7 @@ wait(void)
   struct proc *p;
   int havekids, pid;
   struct proc *curproc = myproc();
-  
+
   acquire(&ptable.lock);
   for(;;){
     // Scan through table looking for exited children.
@@ -352,7 +352,7 @@ scheduler(void)
   struct proc *p;
   struct cpu *c = mycpu();
   c->proc = 0;
-  
+
   for(;;){
     // Enable interrupts on this processor.
     sti();
@@ -577,11 +577,18 @@ void updateTimes() {
             p->rutime++;
             p->remainingTimeSlice--;
         }
-        }
+    }
     release(&ptable.lock);
 }
-/// Initializes the properties of a given process.
-/// Called after allocproc, and acquiring ptable.
+
+
+/**
+ * Initializes the properties of a given process.
+ *
+ * Called after allocproc, and acquiring ptable.
+ *
+ * @param p process pointer
+ */
 void initilizeProc(struct proc *p) {
     p->priority = DEFAULT_PRIORITY;
     acquire(&tickslock);
@@ -593,5 +600,5 @@ void initilizeProc(struct proc *p) {
     p->timeSlice = timeSlices[DEFAULT_PRIORITY];
     p->remainingTimeSlice = timeSlices[DEFAULT_PRIORITY];
     p->priority = DEFAULT_PRIORITY;
-    addToPriority(&prioMlq, DEFAULT_PRIORITY, p);
+    addToMlqInHead(&prioMlq, DEFAULT_PRIORITY, p);
 }
