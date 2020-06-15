@@ -583,7 +583,7 @@ void updateTimes() {
 
 
 /**
- * Initializes the properties of a given process.
+ * Initializes the properties of a given process, and adds it to the mlq.
  *
  * Called after allocproc, and acquiring ptable.
  *
@@ -600,5 +600,5 @@ void initilizeProc(struct proc *p) {
     p->timeSlice = timeSlices[DEFAULT_PRIORITY];
     p->remainingTimeSlice = timeSlices[DEFAULT_PRIORITY];
     p->priority = DEFAULT_PRIORITY;
-    addToMlqInHead(&prioMlq, DEFAULT_PRIORITY, p);
+    addToMlqInTail(&prioMlq, p);
 }
