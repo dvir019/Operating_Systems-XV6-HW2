@@ -347,25 +347,27 @@ wait(void)
 //  - eventually that process transfers control
 //      via swtch back to the scheduler.
 void
-scheduler(void)
-{
-  struct proc *p;
-  struct cpu *c = mycpu();
-  c->proc = 0;
+scheduler(void) {
+    struct proc *p;
+    struct cpu *c = mycpu();
+    c->proc = 0;
 
-  for(;;){
-    // Enable interrupts on this processor.
-    sti();
+    int index;
 
-    // Loop over process table looking for process to run.
-    acquire(&ptable.lock);
-    for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
-      if(p->state != RUNNABLE)
-        continue;
+    for (;;) {
+        // Enable interrupts on this processor.
+        sti();
+
+        // Loop over process table looking for process to run.
+        acquire(&ptable.lock);
+        for (index = 0; index < NPROC; index++) {
+            p = getRunnableProcess(&prioMlq);
+            if (p == NULL)  // No more runnable processes
+                continue;
 
 
             c->proc = p;
-  //          print_proc_stat(p);
+            //          print_proc_stat(p);
 //#ifdef COLLECT_PROC_TIMING
             // update our stats. This has to be done exactly once every TICK.
 //            p->rutime++;
@@ -376,10 +378,12 @@ scheduler(void)
             swtch(&(c->scheduler), p->context);
             switchkvm();
 
+
+
             // Process is done running for now.
             // It should have changed its p->state before coming back.
             c->proc = 0;
-       }
+        }
         release(&ptable.lock);
 
     }
