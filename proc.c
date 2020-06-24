@@ -435,9 +435,12 @@ scheduler(void) {
                 if (p->remainingTimeSlice == 0) {  // Time slice is over
                     p->remainingTimeSlice = timeSlices[p->priority];
                     addToMlqInTail(&prioMlq, p);
+                    cprintf("\n--------------------------------- Add proc [%d] to tail of prio [%d] --------------------------------------\n", p->pid, p->priority);
                 }
-                else
+                else {
                     addToMlqInHead(&prioMlq, p);
+                    cprintf("\n################################# Add proc [%d] to head of prio [%d] #######################################\n", p->pid, p->priority);
+                }
             }
 
             // Process is done running for now.
@@ -597,6 +600,8 @@ int set_priority(int newPrio)
     struct proc *runningProc = myproc();
     runningProc->priority = newPrio;
     runningProc->remainingTimeSlice = 0;  // Set the remaining time slice to zero, so the scheduler detects it
+    cprintf("\n************************Set proc [%d] named [%s] to prio [%d] (requried [%d]****************************\n", runningProc->pid, runningProc->name, runningProc->priority, newPrio);
+    return 0;
 }
 
 //PAGEBREAK: 36

@@ -117,5 +117,14 @@ int sys_wait2(void) {
         return -1;
     if (argptr(3, (void*)&elapsed, sizeof(elapsed)) < 0)
         return -1;
-    return wait2(retime, rutime, stime, elapsed);
+
+//    int retime;
+//    int rutime;
+//    int stime;
+//    int elapsed;
+//    argint(0, &retime);
+//    argint(1,&rutime);
+//    argint(2, &stime);
+//    argint(3, &elapsed);
+    return wait2((int *)retime, (int *)rutime, (int *)stime, (int *)elapsed);
 }
