@@ -381,8 +381,10 @@ scheduler(void) {
             switchkvm();
 
             if (p->state == RUNNABLE || p->state == SLEEPING) {
-                if (p->remainingTimeSlice == 0)
-                    addToMlqInTail(&prioMlq, p);  // Time slice is over
+                if (p->remainingTimeSlice == 0) {  // Time slice is over
+                    p->remainingTimeSlice = timeSlices[p->priority];
+                    addToMlqInTail(&prioMlq, p);
+                }
                 else
                     addToMlqInHead(&prioMlq, p);
             }
