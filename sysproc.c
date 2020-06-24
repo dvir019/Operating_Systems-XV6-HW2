@@ -104,6 +104,18 @@ sys_set_priority(void)
 
     if(argint(0, &priority) < 0)
         return -1;
-
     return set_priority(priority);
+}
+
+int sys_wait2(void) {
+    int *retime, *rutime, *stime, *elapsed;
+    if (argptr(0, (void*)&retime, sizeof(retime)) < 0)
+        return -1;
+    if (argptr(1, (void*)&rutime, sizeof(retime)) < 0)
+        return -1;
+    if (argptr(2, (void*)&stime, sizeof(stime)) < 0)
+        return -1;
+    if (argptr(3, (void*)&elapsed, sizeof(elapsed)) < 0)
+        return -1;
+    return wait2(retime, rutime, stime, elapsed);
 }
