@@ -590,6 +590,15 @@ kill(int pid)
   return -1;
 }
 
+int set_priority(int newPrio)
+{
+    if (newPrio <= 0 || newPrio >= NPRIORITIES)
+        return -1;
+    struct proc *runningProc = myproc();
+    runningProc->priority = newPrio;
+    runningProc->remainingTimeSlice = 0;  // Set the remaining time slice to zero, so the scheduler detects it
+}
+
 //PAGEBREAK: 36
 // Print a process listing to console.  For debugging.
 // Runs when user types ^P on console.
