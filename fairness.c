@@ -2,7 +2,7 @@
 #include "user.h"
 
 
-
+/*
 ////////////////{{ FAKE functions.
 // Remove these functions before implementing your own real code
 int
@@ -17,6 +17,7 @@ int set_priority(int prio)
     return 0;
 }
 ////////////////////////////////// }}
+ */
 
 
 static int iterations = 10*1000*1000;
