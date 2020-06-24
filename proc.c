@@ -27,6 +27,7 @@ extern void trapret(void);
 static void wakeup1(void *chan);
 
 void initilizeProc(struct proc *p);
+void resetProc(struct proc *p);
 
 void
 pinit(void)
@@ -324,6 +325,56 @@ wait(void)
     sleep(curproc, &ptable.lock);  //DOC: wait-sleep
   }
 }
+
+int
+wait2(int *retime, int *rutime, int *stime, int *elapsed)
+{
+    struct proc *p;
+    int havekids, pid;
+    struct proc *curproc = myproc();
+
+    acquire(&ptable.lock);
+    for(;;){
+        // Scan through table looking for exited children.
+        havekids = 0;
+        for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+            if(p->parent != curproc)
+                continue;
+            havekids = 1;
+            if(p->state == ZOMBIE){
+                // Found one.
+                pid = p->pid;
+                *retime = p->retime;
+                *rutime = p->rutime;
+                *stime = p->stime;
+                acquire(&tickslock);
+                *elapsed = ticks - p->ctime;
+                release(&tickslock);
+                kfree(p->kstack);
+                p->kstack = 0;
+                freevm(p->pgdir);
+                p->pid = 0;
+                p->parent = 0;
+                p->name[0] = 0;
+                p->killed = 0;
+                resetProc(p);
+                p->state = UNUSED;
+                release(&ptable.lock);
+                return pid;
+            }
+        }
+
+        // No point waiting if we don't have any children.
+        if(!havekids || curproc->killed){
+            release(&ptable.lock);
+            return -1;
+        }
+
+        // Wait for children to exit.  (See wakeup1 call in proc_exit.)
+        sleep(curproc, &ptable.lock);  //DOC: wait-sleep
+    }
+}
+
 //
 //static void print_proc_stat(struct proc* p){
 //  static int pid = 0;
@@ -613,6 +664,22 @@ void initilizeProc(struct proc *p) {
     p->rutime = 0;
     p->timeSlice = timeSlices[DEFAULT_PRIORITY];
     p->remainingTimeSlice = timeSlices[DEFAULT_PRIORITY];
-    p->priority = DEFAULT_PRIORITY;
     addToMlqInTail(&prioMlq, p);
+}
+
+/**
+ * Resets the properties of a given process.
+ *
+ * Called after acquiring ptable.
+ *
+ * @param p process pointer
+ */
+void resetProc(struct proc *p) {
+    p->priority = DEFAULT_PRIORITY;
+    p->ctime = 0;
+    p->stime = 0;
+    p->retime = 0;
+    p->rutime = 0;
+    p->timeSlice = timeSlices[DEFAULT_PRIORITY];
+    p->remainingTimeSlice = timeSlices[DEFAULT_PRIORITY];
 }
