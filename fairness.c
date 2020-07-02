@@ -53,14 +53,20 @@ void check_proc_order(){
         if (pid == 0) {
             // in child
             //int new_pid = getpid();
-           
+
             int prio = prio_keys[k]; // index k inherited from parent
 		    printf(1,"Child(%d) is setting prio: %d\n", getpid(), prio);
             set_priority(prio);
+//            if (getpid()==5)
+                sleep(100);
+            //sleep(50);
             // do something that takes cpu time
             for(k=0;k< iterations;k++){
                     x += k; // x is global so the compiler cannot remove this loop
             }
+            //if (getpid()==5)
+                //sleep(100);
+
             printf(1,"\nChild(%d) DONE\n", getpid());
             exit();
         } else{
