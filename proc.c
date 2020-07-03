@@ -350,8 +350,7 @@ wait2(int *retime, int *rutime, int *stime, int *elapsed)
                 acquire(&tickslock);
                 *elapsed = p->dtime-p->ctime;//p->retime+p->stime+p->rutime;//ticks - p->ctime;
                 release(&tickslock);
-//                if (p->pid==7)
-//                    cprintf("\n---------------------------- pid=[%d] ctime=[%d] ----------------------------------\n",pid, p->ctime);
+
                 kfree(p->kstack);
                 p->kstack = 0;
                 freevm(p->pgdir);
@@ -404,9 +403,6 @@ scheduler(void) {
     struct proc *p;
     struct cpu *c = mycpu();
     c->proc = 0;
-    //struct proc *lastRan = NULL;
-    //int lastPrio = -1;
-    uint lastTicks = 0;
 
     int index;
 
@@ -416,9 +412,6 @@ scheduler(void) {
 
         // Loop over process table looking for process to run.
         acquire(&ptable.lock);
-//        for (p = ptable.proc; p < &ptable.proc[NPROC]; p++) {
-//            if (p->state != RUNNABLE)
-//                continue;
         for (index = 0; index < NPROC; index++) {
             p = getRunnableProcess(&prioMlq);
             if (p == NULL)  // No more runnable processes
@@ -432,12 +425,6 @@ scheduler(void) {
 //#endif //COLLECT_PROC_TIMING
             switchuvm(p);
             p->state = RUNNING;
-            if (ticks != lastTicks){//p != lastRan || p->priority != lastPrio) {
-                //cprintf("\nJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJ TICK passed: PID=[%d], PRIO=[%d], remaining time slice=[%d] JJJJJJJJJJJJJJJJJJJJJJJJJJJJJJ\n", p->pid, p->priority, p->remainingTimeSlice);
-                //lastRan = p;
-                //lastPrio = p->priority;
-                lastTicks = ticks;
-            }
 
             swtch(&(c->scheduler), p->context);
             switchkvm();
@@ -446,11 +433,9 @@ scheduler(void) {
                 if (p->remainingTimeSlice == 0) {  // Time slice is over
                     p->remainingTimeSlice = timeSlices[p->priority];
                     addToMlqInTail(&prioMlq, p);
-                    //cprintf("\n--------------------------------- Add proc [%d] to tail of prio [%d] --------------------------------------\n", p->pid, p->priority);
                 }
                 else {
                     addToMlqInHead(&prioMlq, p);
-                    //cprintf("\n################################# Add proc [%d] to head of prio [%d] #######################################\n", p->pid, p->priority);
                 }
             }
 
@@ -606,13 +591,11 @@ kill(int pid)
 
 int set_priority(int newPrio)
 {
-    //cprintf("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ENTER SETPRIO, param = [%d]\n", newPrio);
     if (newPrio < 0 || newPrio >= NPRIORITIES)
         return -1;
     struct proc *runningProc = myproc();
     runningProc->priority = newPrio;
     runningProc->remainingTimeSlice = runningProc->priority == 0 ? timeSlices[0] : 1;  // Set the remaining time slice to one, so the scheduler detects it after the tick will end
-    //cprintf("\n***************************************** Set proc [%d] named [%s] to prio [%d] (requried [%d]), retime=[%d] ************************************************************************************\n", runningProc->pid, runningProc->name, runningProc->priority, newPrio, runningProc->retime);
     return 0;
 }
 
@@ -661,13 +644,11 @@ void updateTimes() {
     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++) {
         if (p->state == SLEEPING) {
             p->stime++;
-            //if (p->pid==4) cprintf("\nproc %d is sleeping, ticks=%d !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n", p->pid, ticks);
         }
         else if (p->state == RUNNABLE)
             p->retime++;
         else if (p->state == RUNNING) {
             p->rutime++;
-            //cprintf("\nJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJ TICK passed (now it's %d): PID=[%d], PRIO=[%d], remaining time slice=[%d] JJJJJJJJJJJJJJJJJJJJJJJJJJJJJJ\n",ticks, p->pid, p->priority, p->remainingTimeSlice);
             if (p->priority > 0)
                 p->remainingTimeSlice--;
         }
@@ -694,8 +675,6 @@ void initilizeProc(struct proc *p) {
     p->timeSlice = timeSlices[DEFAULT_PRIORITY];
     p->remainingTimeSlice = timeSlices[DEFAULT_PRIORITY];
     addToMlqInTail(&prioMlq, p);
-//    if (p->pid==7)
-//        cprintf("\n++++++++++++++++++++++++++ Process 7 created, time = [%d], ticks = [%d] +++++++++++++++++++++++++++++++++++\n", p->ctime, ticks);
 }
 
 /**

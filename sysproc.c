@@ -72,8 +72,6 @@ sys_sleep(void)
       return -1;
     }
     sleep(&ticks, &tickslock);
-    //myproc()->stime+=n;
-    //if (sys_getpid()==5) cprintf("\nProcess {%d} woke up! went to sleep for %d at %d, and now its %d\n", sys_getpid(), n, ticks0, ticks);
   }
   release(&tickslock);
   return 0;
